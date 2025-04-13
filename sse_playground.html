@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title> SSE Frontend</title>
+</head>
+<body>
+  <h1>Server-Sent Events</h1>
+  <body>
+    <div id="my-events-container">
+        <h2>Conversation with chatbot</h2>
+        <div id="my-events"></div>
+    </div>
+    <div>
+      <table>
+      <thead>
+        <tr>
+          <th>Event ID</th>
+          <th>Human Prompt</th>
+          <th>Model Response</th>
+        </tr>
+      </thead>
+      <tbody id="messages-list"></tbody>
+    </table>
+  </div>>
+
+  </div>
+
+  <script>
+    const messages_list = document.getElementById('messages-list');
+    console.log('Before Event')
+    const eventSource = new EventSource('http://127.0.0.1:5001/chat');
+    console.log('After Event')
+
+    eventSource.addEventListener('message', event => {
+      console.log('Event', event)
+      const event_data = JSON.parse(event.data);
+      console.log('Event_DATA', event_data)
+
+      const row = document.createElement('tr');
+      row.innerHTML = `<td>${event_data.id}</td><td>${event_data.prompt}</td><td>${event_data.model_response}</td>`;
+      messages_list.appendChild(row);
+    })
+    eventSource.onerror = (error) => {
+      console.error("error", error)
+      eventSource.close()
+    };
+  </script>
+</body>
+</html>
